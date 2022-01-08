@@ -59,6 +59,7 @@ call plug#begin()
 		" Plug 'rcarriga/nvim-dap-ui'
 		" Plug 'Pocco81/DAPInstall.nvim'
 	" Tabline
+		"Plug 'akinsho/bufferline.nvim'
 		Plug 'romgrk/barbar.nvim'
 	" Statusline
 		Plug 'feline-nvim/feline.nvim'
@@ -488,7 +489,7 @@ lua << EOF
 	  render = "default",
 
 	  -- Default timeout for notifications
-	  timeout = 2000,
+	  timeout = 3000,
 
 	  -- For stages that change opacity this is treated as the highlight behind the window
 	  -- Set this to either a highlight group, an RGB hex value e.g. "#000000" or a function returning an RGB code for dynamic values
@@ -507,7 +508,18 @@ lua << EOF
 	  },
 	})
 	vim.notify = require("notify")
+	vim.notify = function(msg, log_level, _opts)
+		if msg:match("exit code") then
+			return
+		end
+		if log_level == vim.log.levels.ERROR then
+			vim.api.nvim_err_writeln(msg)
+		else
+			vim.api.nvim_echo({{msg}}, true, {})
+		end
+	end
 EOF
+lua require("notify")("Welcome, Sexiest Man In The Universe")
 
 
 
