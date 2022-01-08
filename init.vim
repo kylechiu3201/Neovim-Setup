@@ -1,23 +1,18 @@
-" Auto-install vim-plug
-"if empty(glob('$(@($env:XDG_DATA_HOME, $env:LOCALAPPDATA)[$null -eq $env:XDG_DATA_HOME])/nvim-data/site/autoload/plug.vim'))
-  "silent !iwr -useb https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim |` ni "$(@($env:XDG_DATA_HOME, $env:LOCALAPPDATA)[$null -eq $env:XDG_DATA_HOME])/nvim-data/site/autoload/plug.vim" -Force
-  "autocmd VimEnter * PlugInstall
-"endif
-
-
-
-" Run :LspInstall <server>
-	" Where <server> is LSP server from https://github.com/williamboman/nvim-lsp-installer
-	" clangd, cssls, html, jsonls, jdtls, tsserver, pyright, sqls
-" Update local servers in nvim-lsp-config setup
-" Install fzf, ripgrep, LLVM
-" Ensure python3-venv is installed
-	" apt install --yes -- python3-venv
-" Run :TSInstall <language>
-	" Where <language> is language from https://github.com/nvim-treesitter/nvim-treesitter
-	" c, cpp, css, html, java, javascript, json, python, typescript
-" Add to .bashrc or .zshrc: 
-	" alias nvim='nvim --startuptime /tmp/nvim-startuptime'
+" Complete Setup:
+	" Install vim-plug for Neovim
+		" Pull from https://github.com/junegunn/vim-plug
+	" Run :LspInstall <server>
+		" Where <server> is LSP server from https://github.com/williamboman/nvim-lsp-installer
+		" clangd, cssls, html, jsonls, jdtls, tsserver, pyright, sqlls
+	" Update local servers in nvim-lsp-config setup
+	" Install fzf, ripgrep, LLVM
+	" Ensure python3-venv is installed
+		" apt install --yes -- python3-venv
+	" Run :TSInstall <language>
+		" Where <language> is language from https://github.com/nvim-treesitter/nvim-treesitter
+		" c, cpp, css, html, java, javascript, json, python, typescript
+	" Add to .bashrc or .zshrc: 
+		" alias nvim='nvim --startuptime /tmp/nvim-startuptime'
 
 
 
@@ -104,7 +99,7 @@ call plug#begin()
 	" Command Line
 		Plug 'gelguy/wilder.nvim', { 'do': ':UpdateRemotePlugins' }
 	" Sessions
-		Plug 'rmagatti/auto-session'
+		"Plug 'rmagatti/auto-session'
 	" Splits and Windows
 		Plug 'sindrets/winshift.nvim'
 		Plug 'beauwilliams/focus.nvim'
@@ -120,6 +115,7 @@ call plug#begin()
 		Plug 'junegunn/vim-easy-align'
 		Plug 'tpope/vim-surround'
 		Plug 'maxbrunsfeld/vim-yankstack'
+		Plug 'paretje/nvim-man'
 
 call plug#end()
 
@@ -148,19 +144,26 @@ call plug#end()
 	set autoindent
 	set smartindent
 " System-wide Remaps
-	inoremap jk <Esc>
-	inoremap kj <Esc>
+	"inoremap jk <Esc>
+	"inoremap kj <Esc>
 	noremap H ^
 	noremap L $
 	map <C-j> <C-d>
 	map <C-k> <C-u>
-	
+	let g:mapleader = "\<Space>"
+
+
 
 
 
 " nvim-lspconfig setup
 lua << EOF
 	local nvim_lsp = require('lspconfig')
+	local lsp = vim.lsp
+	local handlers = lsp.handlers
+	local pop_opts = { border = "rounded", max_width = 80 }
+	handlers["textDocument/hover"] = lsp.with(handlers.hover, pop_opts)
+	handlers["textDocument/signatureHelp"] = lsp.with(handlers.signature_help, pop_opts)
 
 	-- Use an on_attach function to only map the following keys
 	-- after the language server attaches to the current buffer
@@ -175,6 +178,7 @@ lua << EOF
 	  local opts = { noremap=true, silent=true }
 
 	  -- See `:help vim.lsp.*` for documentation on any of the below functions
+	  --[[
 	  buf_set_keymap('n', 'gD', '<cmd>lua vim.lsp.buf.declaration()<CR>', opts)
 	  buf_set_keymap('n', 'gd', '<cmd>lua vim.lsp.buf.definition()<CR>', opts)
 	  buf_set_keymap('n', 'K', '<cmd>lua vim.lsp.buf.hover()<CR>', opts)
@@ -192,12 +196,12 @@ lua << EOF
 	  buf_set_keymap('n', ']d', '<cmd>lua vim.diagnostic.goto_next()<CR>', opts)
 	  buf_set_keymap('n', '<space>q', '<cmd>lua vim.diagnostic.setloclist()<CR>', opts)
 	  buf_set_keymap('n', '<space>f', '<cmd>lua vim.lsp.buf.formatting()<CR>', opts)
-
+	  --]]
 	end
 
 	-- Use a loop to conveniently call 'setup' on multiple servers and
 	-- map buffer local keybindings when the language server attaches
-	local servers = { 'clangd', 'cssls', 'html', 'jsonls', 'jdtls', 'tsserver', 'pyright', 'sqls' }
+	local servers = { 'clangd', 'cssls', 'html', 'jsonls', 'jdtls', 'tsserver', 'pyright', 'sqlls' }
 	for _, lsp in ipairs(servers) do
 	  nvim_lsp[lsp].setup {
 		on_attach = on_attach,
@@ -207,6 +211,9 @@ lua << EOF
 	  }
 	end
 EOF
+nnoremap gD :lua vim.lsp.buf.declaration()<CR>:echo ''<CR>
+nnoremap gd :lua vim.lsp.buf.definition()<CR>:echo ''<CR>
+nnoremap gr :lua vim.lsp.buf.references()<CR>:echo ''<CR>
 
 
 
@@ -228,6 +235,15 @@ lua << EOF
 		-- Refer to https://github.com/neovim/nvim-lspconfig/blob/master/doc/server_configurations.md
 		server:setup(opts)
 	end)
+	lsp_installer.settings({
+		ui = {
+			icons = {
+				server_installed = "✓",
+				server_pending = "➜",
+				server_uninstalled = "✗"
+			}
+		}
+	})
 EOF
 
 
@@ -235,11 +251,15 @@ EOF
 " coc_nvim setup
 let g:coq_settings = { 'auto_start': 'shut-up' }
 lua << EOF
-	local lsp = require "lspconfig"
+	local lspconfig = require('lspconfig')
 	local coq = require "coq"
+	local servers = { 'clangd', 'cssls', 'html', 'jsonls', 'jdtls', 'tsserver', 'pyright', 'sqlls' }
+	for _, lsp in ipairs(servers) do
+		lspconfig[lsp].setup(require('coq').lsp_ensure_capabilities({
+		}))
+	end
 EOF
 "coq_settings.clients.tabnine.enabled=true
-"coq_settings.clients.snippets.warn=[]
 
 
 
@@ -262,52 +282,26 @@ lua << EOF
 	  }
 	}
 	require 'nvim-treesitter.install'.compilers = { "clang" }
+	--require('nvim-treesitter.install').compilers = { "gcc" }
 EOF
 
 
 
 " toggleterm.nvim setup
-lua << EOF
-	-- TODO
-	require("toggleterm").setup{
-	  -- size can be a number or function which is passed the current terminal
-	  --[[size = 20 | function(term)
-		if term.direction == "horizontal" then
-		  return 15
-		elseif term.direction == "vertical" then
-		  return vim.o.columns * 0.4
-		end
-	  end,--]]
-	  open_mapping = [[<c-\>]],
-	  -- on_open = fun(t: Terminal), -- function to run when the terminal opens
-	  -- on_close = fun(t: Terminal), -- function to run when the terminal closes
-	  hide_numbers = true, -- hide the number column in toggleterm buffers
-	  shade_filetypes = {},
-	  shade_terminals = true,
-	  shading_factor = '<number>', -- the degree by which to darken to terminal colour, default: 1 for dark backgrounds, 3 for light
-	  start_in_insert = true,
-	  insert_mappings = true, -- whether or not the open mapping applies in insert mode
-	  persist_size = true,
-	  -- direction = 'vertical' | 'horizontal' | 'window' | 'float',
-	  close_on_exit = true, -- close the terminal window when the process exits
-	  shell = vim.o.shell, -- change the default shell
-	  -- This field is only relevant if direction is set to 'float'
-	  float_opts = {
-		-- The border key is *almost* the same as 'nvim_open_win'
-		-- see :h nvim_open_win for details on borders however
-		-- the 'curved' border is a custom border type
-		-- not natively supported but implemented in this plugin.
-		-- border = 'single' | 'double' | 'shadow' | 'curved' | ... other options supported by win open
-		-- width = <value>,
-		-- height = <value>,
-		winblend = 3,
-		highlights = {
-		  border = "Normal",
-		  background = "Normal",
-		}
-	  }
-	}
-EOF
+" set
+let g:toggleterm_terminal_mapping = '<C-t>'
+" or manually...
+autocmd TermEnter term://*toggleterm#*
+      \ tnoremap <silent><c-t> <Cmd>exe v:count1 . "ToggleTerm"<CR>
+" By applying the mappings this way you can pass a count to your
+" mapping to open a specific window.
+" For example: 2<C-t> will open terminal 2
+tnoremap <Esc> <C-\><C-n>
+tnoremap jk <C-\><C-n>
+tnoremap kj <C-\><C-n>
+tnoremap <C-w> <C-\><C-n><C-w>
+nnoremap <silent><c-t> <Cmd>exe v:count1 . "ToggleTerm"<CR>
+inoremap <silent><c-t> <Esc><Cmd>exe v:count1 . "ToggleTerm"<CR>
 
 
 
@@ -349,6 +343,11 @@ lua << EOF
 	  }
 	}
 EOF
+" Find files using Telescope command-line sugar.
+nnoremap <leader>ff <cmd>Telescope find_files<cr>
+nnoremap <leader>fg <cmd>Telescope live_grep<cr>
+nnoremap <leader>fb <cmd>Telescope buffers<cr>
+nnoremap <leader>fh <cmd>Telescope help_tags<cr>
 
 
 
@@ -400,6 +399,9 @@ lua << EOF
 	  exclude = {}, -- table: groups you don't want to clear
 	})
 EOF
+" Disables transparency by default
+let g:transparent_enabled = v:false
+nnoremap <F6> :TransparentToggle<CR>
 
 
 
@@ -411,23 +413,23 @@ lua << EOF
 		-- refer to the configuration section below
 	}
 EOF
+nnoremap <leader>tt <cmd>Twilight<cr>
+" Enables Twilight on startup
+autocmd VimEnter * TwilightEnable
 
 
 
 " shade.nvim setup
 lua << EOF
-	-- TODO
-	--[[
 	require'shade'.setup({
 	  overlay_opacity = 50,
 	  opacity_step = 1,
 	  keys = {
 		brightness_up    = '<C-Up>',
 		brightness_down  = '<C-Down>',
-		toggle           = '<Leader>s',
+		toggle           = '<Leader>ts',
 	  }
 	})
-	--]]
 EOF
 
 
@@ -467,7 +469,42 @@ EOF
 
 
 " nvim-notify setup
-	lua vim.notify = require("notify")
+	"lua vim.notify = require("notify")
+lua << EOF
+	require("notify").setup({
+	  -- Animation style (see below for details)
+	  stages = "fade_in_slide_out",
+
+	  -- Function called when a new window is opened, use for changing win settings/config
+	  on_open = nil,
+
+	  -- Function called when a window is closed
+	  on_close = nil,
+
+	  -- Render function for notifications. See notify-render()
+	  render = "default",
+
+	  -- Default timeout for notifications
+	  timeout = 2000,
+
+	  -- For stages that change opacity this is treated as the highlight behind the window
+	  -- Set this to either a highlight group, an RGB hex value e.g. "#000000" or a function returning an RGB code for dynamic values
+	  background_colour = "Normal",
+
+	  -- Minimum width for notification windows
+	  minimum_width = 50,
+
+	  -- Icons for the different levels
+	  icons = {
+		ERROR = "",
+		WARN = "",
+		INFO = "",
+		DEBUG = "",
+		TRACE = "✎",
+	  },
+	})
+	--vim.notify = require("notify")
+EOF
 
 
 
@@ -489,6 +526,7 @@ lua << EOF
 	 -- will get overriden by `get_icons` option
 	 default = true;
 	}
+	require'nvim-web-devicons'.get_icons()
 EOF
 
 
@@ -541,8 +579,25 @@ EOF
 
 
 " nvim-startup.lua setup
-	"TODO
-	"lua require 'nvim-startup'.setup()
+let g:nvim_startup_file='C:/temp/nvim-startuptime'
+lua << EOF
+	require 'nvim-startup'.setup {
+		startup_file = 'C:/temp/nvim-startuptime', -- sets startup log path (string)
+	}
+EOF
+
+
+
+" dashboard-nvim setup
+	let g:dashboard_default_executive = 'telescope'
+	let g:dashboard_custom_header = [
+	\ ' ███╗   ██╗ ███████╗ ██████╗  ██╗   ██╗ ██╗ ███╗   ███╗',
+	\ ' ████╗  ██║ ██╔════╝██╔═══██╗ ██║   ██║ ██║ ████╗ ████║',
+	\ ' ██╔██╗ ██║ █████╗  ██║   ██║ ██║   ██║ ██║ ██╔████╔██║',
+	\ ' ██║╚██╗██║ ██╔══╝  ██║   ██║ ╚██╗ ██╔╝ ██║ ██║╚██╔╝██║',
+	\ ' ██║ ╚████║ ███████╗╚██████╔╝  ╚████╔╝  ██║ ██║ ╚═╝ ██║',
+	\ ' ╚═╝  ╚═══╝ ╚══════╝ ╚═════╝    ╚═══╝   ╚═╝ ╚═╝     ╚═╝',
+	\]
 
 
 
@@ -552,14 +607,15 @@ lua << EOF
 	vim.opt.listchars:append("eol:↴")
 	require("indent_blankline").setup {
 		show_end_of_line = true,
-		show_current_context = true,
-		show_current_context_start = true,
 	}
 EOF
+let g:indent_blankline_use_treesitter = v:true
+let g:indent_blankline_filetype_exclude = ['dashboard']
 
 
 
 " nvim-tree.lua setup
+nnoremap <C-n> :NvimTreeToggle<CR>
 lua << EOF
 	require'nvim-tree'.setup {
 	  disable_netrw       = true,
@@ -658,11 +714,7 @@ EOF
 
 " todo-comments.nvim setup
 lua << EOF
-	require("todo-comments").setup {
-		-- your configuration comes here
-		-- or leave it empty to use the default settings
-		-- refer to the configuration section below
-	}
+	require("todo-comments").setup {}
 EOF
 
 
@@ -839,11 +891,16 @@ EOF
 		 \ 'accept_key': '<Down>',
 		 \ 'reject_key': '<Up>',
 		 \ })
+	call wilder#set_option('renderer', wilder#popupmenu_renderer({
+		 \ 'highlighter': wilder#basic_highlighter(),
+		 \ 'pumblend': 20,
+		 \ 'highlights': { 'accent': wilder#make_hl('WilderAccent', 'Pmenu', [{}, {}, {'foreground': '#0D6FFF'}]), },
+		 \ }))
 
 
 
 " auto-session setup
-	lua require('auto-session').setup()
+	"lua require('auto-session').setup()
 
 
 
@@ -915,3 +972,14 @@ lua << EOF
 	  border = 'single'
 	})
 EOF
+
+
+
+" undotree setup
+	nnoremap <F5> :UndotreeToggle<CR>
+
+
+
+" highlight-current-n setup
+	nmap n <Plug>(highlight-current-n-n)
+	nmap N <Plug>(highlight-current-n-N)
