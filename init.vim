@@ -11,6 +11,11 @@
 	" Run :TSInstall <language>
 		" Where <language> is language from https://github.com/nvim-treesitter/nvim-treesitter
 		" c, cpp, css, html, java, javascript, json, python, typescript
+		" If errors with '*.so ... is not a valid Win32 Application', might need to start up
+			"'x64 Native Tools Command Prompt (VS)' and reinstall with TSInstall, then run TSUpdate
+			" (Reference https://github.com/nvim-treesitter/nvim-treesitter/issues/438)
+	" Install Inconsolata Nerd Font to computer (if not already)
+		" From https://www.nerdfonts.com/font-downloads
 	" Add to .bashrc or .zshrc: 
 		" alias nvim='nvim --startuptime /tmp/nvim-startuptime'
 
@@ -282,7 +287,6 @@ lua << EOF
 	  }
 	}
 	require 'nvim-treesitter.install'.compilers = { "clang" }
-	--require('nvim-treesitter.install').compilers = { "gcc" }
 EOF
 
 
@@ -469,7 +473,6 @@ EOF
 
 
 " nvim-notify setup
-	"lua vim.notify = require("notify")
 lua << EOF
 	require("notify").setup({
 	  -- Animation style (see below for details)
@@ -503,30 +506,7 @@ lua << EOF
 		TRACE = "✎",
 	  },
 	})
-	--vim.notify = require("notify")
-EOF
-
-
-
-" nvim-web-devicons setup
-lua << EOF
-	require'nvim-web-devicons'.setup {
-	 -- your personnal icons can go here (to override)
-	 -- you can specify color or cterm_color instead of specifying both of them
-	 -- DevIcon will be appended to `name`
-	 override = {
-	  zsh = {
-		icon = "",
-		color = "#428850",
-		cterm_color = "65",
-		name = "Zsh"
-	  }
-	 };
-	 -- globally enable default icons (default to false)
-	 -- will get overriden by `get_icons` option
-	 default = true;
-	}
-	require'nvim-web-devicons'.get_icons()
+	vim.notify = require("notify")
 EOF
 
 
@@ -971,6 +951,30 @@ lua << EOF
 	  -- The border style to use for the floating window.
 	  border = 'single'
 	})
+EOF
+
+
+
+" nvim-web-devicons setup
+lua << EOF
+	require'nvim-web-devicons'.setup {
+	 -- your personnal icons can go here (to override)
+	 -- you can specify color or cterm_color instead of specifying both of them
+	 -- DevIcon will be appended to `name`
+	 --[[
+	 override = {
+	  zsh = {
+		icon = "",
+		color = "#428850",
+		cterm_color = "65",
+		name = "Zsh"
+	  }
+	 };
+	 --]]
+	 -- globally enable default icons (default to false)
+	 -- will get overriden by `get_icons` option
+	 default = true;
+	}
 EOF
 
 
