@@ -1,4 +1,5 @@
-" Complete Setup:
+" Complete Setup
+	" For some reason only works well with terminal version
 	" Install vim-plug for Neovim
 		" Pull from https://github.com/junegunn/vim-plug
 	" Run :LspInstall <server>
@@ -17,7 +18,7 @@
 	" Install Inconsolata Nerd Font to computer (if not already)
 		" From https://www.nerdfonts.com/font-downloads
 	" Add to .bashrc or .zshrc: 
-		" alias nvim='nvim --startuptime /tmp/nvim-startuptime'
+		" alias nvim='nvim --startuptime C:/temp/nvim-startuptime'
 
 
 
@@ -217,9 +218,9 @@ lua << EOF
 	  }
 	end
 EOF
-nnoremap gD :lua vim.lsp.buf.declaration()<CR>:echo ''<CR>
-nnoremap gd :lua vim.lsp.buf.definition()<CR>:echo ''<CR>
-nnoremap gr :lua vim.lsp.buf.references()<CR>:echo ''<CR>
+nnoremap <silent>gD :lua vim.lsp.buf.declaration()<CR>
+nnoremap <silent>gd :lua vim.lsp.buf.definition()<CR>
+nnoremap <silent>gr :lua vim.lsp.buf.references()<CR>
 
 
 
@@ -287,7 +288,7 @@ lua << EOF
 		enable = true
 	  }
 	}
-	require 'nvim-treesitter.install'.compilers = { "clang" }
+	--require 'nvim-treesitter.install'.compilers = { "clang" }
 EOF
 
 
@@ -418,7 +419,7 @@ lua << EOF
 		-- refer to the configuration section below
 	}
 EOF
-nnoremap <leader>tt <cmd>Twilight<cr>
+nnoremap <silent><leader>tt <cmd>Twilight<cr>
 " Enables Twilight on startup
 autocmd VimEnter * TwilightEnable
 
@@ -525,25 +526,26 @@ lua require("notify")("Welcome, Sexiest Man In The Universe")
 
 " barbar.nvim setup
 	" Move to previous/next
-	nnoremap <silent>    <A-,> :BufferPrevious<CR>
-	nnoremap <silent>    <A-.> :BufferNext<CR>
+	nnoremap <silent>    <C-h> :BufferPrevious<CR>
+	nnoremap <silent>    <C-l> :BufferNext<CR>
 	" Re-order to previous/next
-	nnoremap <silent>    <A-<> :BufferMovePrevious<CR>
-	nnoremap <silent>    <A->> :BufferMoveNext<CR>
+	nnoremap <silent>    <C-,> :BufferMovePrevious<CR>
+	nnoremap <silent>    <C-.> :BufferMoveNext<CR>
 	" Goto buffer in position...
-	nnoremap <silent>    <A-1> :BufferGoto 1<CR>
-	nnoremap <silent>    <A-2> :BufferGoto 2<CR>
-	nnoremap <silent>    <A-3> :BufferGoto 3<CR>
-	nnoremap <silent>    <A-4> :BufferGoto 4<CR>
-	nnoremap <silent>    <A-5> :BufferGoto 5<CR>
-	nnoremap <silent>    <A-6> :BufferGoto 6<CR>
-	nnoremap <silent>    <A-7> :BufferGoto 7<CR>
-	nnoremap <silent>    <A-8> :BufferGoto 8<CR>
-	nnoremap <silent>    <A-9> :BufferLast<CR>
+	nnoremap <silent>    <C-1> :BufferGoto 1<CR>
+	nnoremap <silent>    <C-2> :BufferGoto 2<CR>
+	nnoremap <silent>    <C-3> :BufferGoto 3<CR>
+	nnoremap <silent>    <C-4> :BufferGoto 4<CR>
+	nnoremap <silent>    <C-5> :BufferGoto 5<CR>
+	nnoremap <silent>    <C-6> :BufferGoto 6<CR>
+	nnoremap <silent>    <C-7> :BufferGoto 7<CR>
+	nnoremap <silent>    <C-8> :BufferGoto 8<CR>
+	nnoremap <silent>    <C-9> :BufferLast<CR>
 	" Pin/unpin buffer
-	nnoremap <silent>    <A-p> :BufferPin<CR>
+	nnoremap <silent>    <C-p> :BufferPin<CR>
 	" Close buffer
 	nnoremap <silent>    <A-c> :BufferClose<CR>
+	nnoremap <silent>    <A-d> :BufferClose<CR>
 	" Wipeout buffer
 	"                          :BufferWipeout<CR>
 	" Close commands
@@ -554,11 +556,10 @@ lua require("notify")("Welcome, Sexiest Man In The Universe")
 	" Magic buffer-picking mode
 	nnoremap <silent> <C-s>    :BufferPick<CR>
 	" Sort automatically by...
-	nnoremap <silent> <Space>bb :BufferOrderByBufferNumber<CR>
-	nnoremap <silent> <Space>bd :BufferOrderByDirectory<CR>
-	nnoremap <silent> <Space>bl :BufferOrderByLanguage<CR>
-	nnoremap <silent> <Space>bw :BufferOrderByWindowNumber<CR>
-
+	" nnoremap <silent> <Space>bb :BufferOrderByBufferNumber<CR>
+	" nnoremap <silent> <Space>bd :BufferOrderByDirectory<CR>
+	" nnoremap <silent> <Space>bl :BufferOrderByLanguage<CR>
+	" nnoremap <silent> <Space>bw :BufferOrderByWindowNumber<CR>
 	" Other:
 	" :BarbarEnable - enables barbar (enabled by default)
 	" :BarbarDisable - very bad command, should never be used
@@ -607,7 +608,7 @@ let g:indent_blankline_filetype_exclude = ['dashboard']
 
 
 " nvim-tree.lua setup
-nnoremap <C-n> :NvimTreeToggle<CR>
+nnoremap <silent><C-n> :NvimTreeToggle<CR>
 lua << EOF
 	require'nvim-tree'.setup {
 	  disable_netrw       = true,
