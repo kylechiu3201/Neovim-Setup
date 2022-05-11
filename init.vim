@@ -4,14 +4,15 @@
 		" Pull from https://github.com/junegunn/vim-plug
 	" Run :LspInstall <server>
 		" Where <server> is LSP server from https://github.com/williamboman/nvim-lsp-installer
-		" clangd, cssls, html, jsonls, jdtls, tsserver, pyright, sqlls
+		" clangd, cssls, html, jsonls, jdtls, tsserver, pyright, sqlls, gopls
+		" Might need to use x64 native tools command prompt for VS 2017 cmd to open nvim and install
 	" Update local servers in nvim-lsp-config setup
 	" Install fzf, ripgrep, LLVM
 	" Ensure python3-venv is installed
 		" apt install --yes -- python3-venv
 	" Run :TSInstall <language>
 		" Where <language> is language from https://github.com/nvim-treesitter/nvim-treesitter
-		" c, cpp, css, html, java, javascript, json, python, typescript
+		" c, cpp, css, html, java, javascript, json, python, typescript, go
 		" If errors with '*.so ... is not a valid Win32 Application', might need to start up
 			"'x64 Native Tools Command Prompt (VS)' and reinstall with TSInstall, then run TSUpdate
 			" (Reference https://github.com/nvim-treesitter/nvim-treesitter/issues/438)
@@ -27,6 +28,8 @@ call plug#begin()
 	" LSP
 		Plug 'neovim/nvim-lspconfig'
 		Plug 'williamboman/nvim-lsp-installer'
+		Plug 'folke/trouble.nvim'
+		Plug 'folke/lsp-colors.nvim'
 	" Completion
 		Plug 'ms-jpq/coq_nvim', {'branch': 'coq'}
 	" Syntax
@@ -41,7 +44,7 @@ call plug#begin()
 		Plug 'nvim-telescope/telescope-fzf-native.nvim', { 'do': 'make' }
 		Plug 'vijaymarupudi/nvim-fzf'
 	" Color
-		Plug 'xiyaowong/nvim-transparent'
+		" Plug 'xiyaowong/nvim-transparent'
 		Plug 'folke/twilight.nvim'
 		Plug 'sunjon/shade.nvim'
 		Plug 'norcalli/nvim-colorizer.lua'
@@ -60,7 +63,7 @@ call plug#begin()
 		" Plug 'rcarriga/nvim-dap-ui'
 		" Plug 'Pocco81/DAPInstall.nvim'
 	" Tabline
-		"Plug 'akinsho/bufferline.nvim'
+		" Plug 'akinsho/bufferline.nvim'
 		Plug 'romgrk/barbar.nvim'
 	" Statusline
 		Plug 'feline-nvim/feline.nvim'
@@ -158,6 +161,19 @@ call plug#end()
 	map <C-j> <C-d>
 	map <C-k> <C-u>
 	let g:mapleader = "\<Space>"
+	autocmd filetype cpp nnoremap <F4> :w <bar> exec '!g++ '.shellescape('%').' -o '.shellescape('%:r').' && '.shellescape('%:r')<CR>
+" Folding settings
+	set foldmethod=manual
+	set foldtext=getline(v:foldstart).'...'.trim(getline(v:foldend))
+	set fillchars=fold:\ 
+	set foldnestmax=3
+	set foldminlines=1
+	au BufWinLeave *.cpp mkview!
+	au BufWinEnter *.cpp silent! loadview
+	"au BufWinLeave, BufLeave ?* mkview
+	"au BufWinEnter, BufEnter ?* silent loadview
+	"au BufWinLeave ?* mkview!
+	"au BufWinEnter ?* silent! loadview
 
 
 
@@ -208,7 +224,7 @@ lua << EOF
 
 	-- Use a loop to conveniently call 'setup' on multiple servers and
 	-- map buffer local keybindings when the language server attaches
-	local servers = { 'clangd', 'cssls', 'html', 'jsonls', 'jdtls', 'tsserver', 'pyright', 'sqlls' }
+	local servers = { 'clangd', 'cssls', 'html', 'jsonls', 'jdtls', 'tsserver', 'pyright', 'sqlls', 'gopls' }
 	for _, lsp in ipairs(servers) do
 	  nvim_lsp[lsp].setup {
 		on_attach = on_attach,
@@ -217,6 +233,8 @@ lua << EOF
 		}
 	  }
 	end
+	vim.o.updatetime = 250
+	vim.cmd [[autocmd CursorHold,CursorHoldI * lua vim.diagnostic.open_float(nil, {focus=false})]]
 EOF
 nnoremap <silent>gD :lua vim.lsp.buf.declaration()<CR>
 nnoremap <silent>gd :lua vim.lsp.buf.definition()<CR>
@@ -255,12 +273,35 @@ EOF
 
 
 
+" trouble.nvim setup
+lua require("trouble").setup{}
+nnoremap <leader>xx <cmd>TroubleToggle<cr>
+nnoremap <leader>xw <cmd>TroubleToggle workspace_diagnostics<cr>
+nnoremap <leader>xd <cmd>TroubleToggle document_diagnostics<cr>
+nnoremap <leader>xq <cmd>TroubleToggle quickfix<cr>
+nnoremap <leader>xl <cmd>TroubleToggle loclist<cr>
+nnoremap gR <cmd>TroubleToggle lsp_references<cr>
+
+
+
+" lsp-colors.nvim setup
+lua << EOF
+	require("lsp-colors").setup({
+	Error = "#db4b4b",
+	Warning = "#e0af68",
+	Information = "#0db9d7",
+	Hint = "#10B981"
+})
+EOF
+
+
+
 " coc_nvim setup
 let g:coq_settings = { 'auto_start': 'shut-up' }
 lua << EOF
 	local lspconfig = require('lspconfig')
 	local coq = require "coq"
-	local servers = { 'clangd', 'cssls', 'html', 'jsonls', 'jdtls', 'tsserver', 'pyright', 'sqlls' }
+	local servers = { 'clangd', 'cssls', 'html', 'jsonls', 'jdtls', 'tsserver', 'pyright', 'sqlls', 'gopls' }
 	for _, lsp in ipairs(servers) do
 		lspconfig[lsp].setup(require('coq').lsp_ensure_capabilities({
 		}))
@@ -318,7 +359,7 @@ inoremap <silent><c-t> <Esc><Cmd>exe v:count1 . "ToggleTerm"<CR>
 
 " telescope.nvim setup
 lua << EOF
-	require('telescope').setup{
+	  require("telescope").setup{
 	  defaults = {
 		-- Default configuration for telescope goes here:
 		-- config_key = value,
@@ -327,8 +368,8 @@ lua << EOF
 			-- map actions.which_key to <C-h> (default: <C-/>)
 			-- actions.which_key shows the mappings for your picker,
 			-- e.g. git_{create, delete, ...}_branch for the git_branches picker
-			["<C-h>"] = "which_key"
-		  }
+			["<C-h>"] = "which_key",
+		  },
 		}
 	  },
 	  pickers = {
@@ -389,6 +430,7 @@ EOF
 
 " nvim-transparent setup
 lua << EOF
+	--[[
 	require("transparent").setup({
 	  enable = true, -- boolean: enable transparent
 	  extra_groups = { -- table/string: additional groups that should be clear
@@ -404,10 +446,11 @@ lua << EOF
 	  },
 	  exclude = {}, -- table: groups you don't want to clear
 	})
+	--]]
 EOF
 " Disables transparency by default
-let g:transparent_enabled = v:false
-nnoremap <F6> :TransparentToggle<CR>
+"let g:transparent_enabled = v:false
+"nnoremap <F6> :TransparentToggle<CR>
 
 
 
@@ -421,7 +464,7 @@ lua << EOF
 EOF
 nnoremap <silent><leader>tt <cmd>Twilight<cr>
 " Enables Twilight on startup
-autocmd VimEnter * TwilightEnable
+"autocmd VimEnter * TwilightEnable
 
 
 
@@ -526,26 +569,26 @@ lua require("notify")("Welcome, Sexiest Man In The Universe")
 
 " barbar.nvim setup
 	" Move to previous/next
-	nnoremap <silent>    <C-h> :BufferPrevious<CR>
-	nnoremap <silent>    <C-l> :BufferNext<CR>
+	nnoremap <silent><C-f><C-h> :BufferPrevious<CR>
+	nnoremap <silent><C-f><C-l> :BufferNext<CR>
 	" Re-order to previous/next
-	nnoremap <silent>    <C-,> :BufferMovePrevious<CR>
-	nnoremap <silent>    <C-.> :BufferMoveNext<CR>
+	nnoremap <silent><C-f><C-f><C-h> :BufferMovePrevious<CR>
+	nnoremap <silent><C-f><C-f><C-l> :BufferMoveNext<CR>
 	" Goto buffer in position...
-	nnoremap <silent>    <C-1> :BufferGoto 1<CR>
-	nnoremap <silent>    <C-2> :BufferGoto 2<CR>
-	nnoremap <silent>    <C-3> :BufferGoto 3<CR>
-	nnoremap <silent>    <C-4> :BufferGoto 4<CR>
-	nnoremap <silent>    <C-5> :BufferGoto 5<CR>
-	nnoremap <silent>    <C-6> :BufferGoto 6<CR>
-	nnoremap <silent>    <C-7> :BufferGoto 7<CR>
-	nnoremap <silent>    <C-8> :BufferGoto 8<CR>
-	nnoremap <silent>    <C-9> :BufferLast<CR>
+	nnoremap <silent><C-f>1 :BufferGoto 1<CR>
+	nnoremap <silent><C-f>2 :BufferGoto 2<CR>
+	nnoremap <silent><C-f>3 :BufferGoto 3<CR>
+	nnoremap <silent><C-f>4 :BufferGoto 4<CR>
+	nnoremap <silent><C-f>5 :BufferGoto 5<CR>
+	nnoremap <silent><C-f>6 :BufferGoto 6<CR>
+	nnoremap <silent><C-f>7 :BufferGoto 7<CR>
+	nnoremap <silent><C-f>8 :BufferGoto 8<CR>
+	nnoremap <silent><C-f>9 :BufferLast<CR>
 	" Pin/unpin buffer
-	nnoremap <silent>    <C-p> :BufferPin<CR>
+	nnoremap <silent><C-f><C-p> :BufferPin<CR>
 	" Close buffer
-	nnoremap <silent>    <A-c> :BufferClose<CR>
-	nnoremap <silent>    <A-d> :BufferClose<CR>
+	nnoremap <silent><C-f><C-w> :BufferClose<CR>
+	nnoremap <silent><C-f><C-q> :BufferClose!<CR>
 	" Wipeout buffer
 	"                          :BufferWipeout<CR>
 	" Close commands
@@ -554,7 +597,7 @@ lua require("notify")("Welcome, Sexiest Man In The Universe")
 	"                          :BufferCloseBuffersLeft<CR>
 	"                          :BufferCloseBuffersRight<CR>
 	" Magic buffer-picking mode
-	nnoremap <silent> <C-s>    :BufferPick<CR>
+	nnoremap <silent><C-f><C-s> :BufferPick<CR>
 	" Sort automatically by...
 	" nnoremap <silent> <Space>bb :BufferOrderByBufferNumber<CR>
 	" nnoremap <silent> <Space>bd :BufferOrderByDirectory<CR>
@@ -562,7 +605,7 @@ lua require("notify")("Welcome, Sexiest Man In The Universe")
 	" nnoremap <silent> <Space>bw :BufferOrderByWindowNumber<CR>
 	" Other:
 	" :BarbarEnable - enables barbar (enabled by default)
-	" :BarbarDisable - very bad command, should never be used
+	" :BarbarDisable - very bad command, should never be used	
 
 
 
@@ -707,7 +750,7 @@ EOF
 
 " todo-comments.nvim setup
 lua << EOF
-	require("todo-comments").setup {}
+	require("todo-comments").setup{}
 EOF
 
 
@@ -729,7 +772,7 @@ EOF
 
 
 " neoscroll.nvim setup
-	lua require('neoscroll').setup()
+	"lua require('neoscroll').setup()
 
 
 
@@ -1000,3 +1043,35 @@ EOF
 " highlight-current-n setup
 	nmap n <Plug>(highlight-current-n-n)
 	nmap N <Plug>(highlight-current-n-N)
+
+
+
+
+
+" - Make LSP Errors/Warnings display differently
+" - Configure all COQ stuff
+" - notifications
+" 	- hihglight normal thing is annoying
+" 	- maybe less intrusive
+" - Telescope keymappings
+" - Telescope FZF Native loading doesn't work
+" - Transparent Doesn't Work
+" - Indent highlight thing is red?
+" - VSCode colorscheme for other buffers/tabline/stuff
+" - DAP stuff you skipped
+" - Barbar doesn't show/work
+" - Customize feline.nvim?
+" - startup time only works with terminal
+" - maybe delete auto session
+" - weird thing where you make for loop then {|} press enter
+" - undotree toggle weird 'buffer' thing below
+" - autocomplete popup looks bad
+" - TODO comment highlighting doesn't work
+" - if transparent doesn't work, disable it for less black background
+" - highlight current n highlight color change
+" - disable twilight in dashboard
+" - add more nvim tree keybinds to instructions
+" - Neovim folds
+" - filetree too wide
+" - filetree doesn't move tab bar
+" - linting doesn't work for js?

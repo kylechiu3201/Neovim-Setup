@@ -1,0 +1,127 @@
+" LSP
+	neovim/nvim-lspconfig
+	williamboman/nvim-lsp-installer
+	folke/trouble.nvim
+	folke/lsp-colors.nvim
+
+" Completion
+	ms-jpq/coq_nvim
+
+" Syntax
+	nvim-treesitter/nvim-treesitter
+
+" Terminal Integration
+	akinsho/toggleterm.nvim
+
+" Registers
+	gennaro-tedesco/nvim-peekup
+
+" Fuzzy Finding
+	nvim-lua/plenary.nvim
+	nvim-telescope/telescope.nvim
+	nvim-telescope/telescope-fzf-native.nvim
+	vijaymarupudi/nvim-fzf
+
+" Color
+	xiyaowong/nvim-transparent
+	folke/twilight.nvim
+	sunjon/Shade.nvim
+	norcalli/nvim-colorizer.lua
+	winston0410/range-highlight.nvim
+
+" Colorscheme
+	Mofiqul/vscode.nvim
+
+" Utilities
+	famiu/bufdelete.nvim
+	max397574/better-escape.nvim
+	rcarriga/nvim-notify
+
+" Icons
+	kyazdani42/nvim-web-devicons
+
+" Debugging
+	mfussenegger/nvim-dap
+	rcarriga/nvim-dap-ui
+	Pocco81/DAPInstall.nvim
+
+" Tabline
+	romgrk/barbar.nvim
+
+" Statusline
+	feline-nvim/feline.nvim
+
+" Cursorline
+	yamatsum/nvim-cursorline
+
+" Startup
+	glepnir/dashboard-nvim
+	henriquehbr/nvim-startup.lua
+
+" Indentation
+	lukas-reineke/indent-blankline.nvim
+
+" File Explorer
+	kyazdani42/nvim-tree.lua
+
+" Git
+	lewis6991/gitsigns.nvim
+	ruifm/gitlinker.nvim
+	rhysd/conflict-marker.vim
+	tpope/vim-fugitive
+
+" Commenting
+	numToStr/Comment.nvim
+	folke/todo-comments.nvim
+	s1n7ax/nvim-comment-frame
+	danymat/neogen
+
+" Quick Fix
+	kevinhwang91/nvim-bqf
+
+" Motion
+	ggandor/lightspeed.nvim
+	tpope/vim-repeat
+
+" Search
+	rktjmp/highlight-current-n.nvim
+
+" Scrolling
+	karb94/neoscroll.nvim
+
+" Editing Support
+	windwp/nvim-ts-autotag
+	Pocco81/TrueZen.nvim
+	romgrk/nvim-treesitter-context
+	nacro90/numb.nvim
+	abecodes/tabout.nvim
+	semanticart/tag-peek.vim
+
+" Formatting
+	sbdchd/neoformat
+
+" Discord Rich Presence
+	andweeb/presence.nvim
+
+" Command Line
+	gelguy/wilder.nvim
+
+" Sessions
+	rmagatti/auto-session
+
+" Splits and Windows
+	sindrets/winshift.nvim
+	beauwilliams/focus.nvim
+	luukvbaal/stabilize.nvim
+	https://gitlab.com/yorickpeterse/nvim-window.git
+
+" Miscellaneous
+	jiangmiao/auto-pairs
+	camspiers/lens.vim
+	camspiers/animate.vim
+	jremmen/vim-ripgrep
+	mbbill/undotree
+	tpope/vim-eunuch
+	junegunn/vim-easy-align
+	tpope/vim-surround
+	maxbrunsfeld/vim-yankstack

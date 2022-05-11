@@ -1,0 +1,158 @@
+"Remappings
+  set relativenumber number
+  set whichwrap+=<,>,[,]
+"Indentation
+  set shiftwidth=4
+  set tabstop=4
+  set expandtab
+  set softtabstop=4
+  set autoindent
+  set smartindent
+
+  set noerrorbells
+  set nowrap
+
+  inoremap jk <Esc>
+  inoremap kj <Esc>
+
+  noremap H ^
+  noremap L $
+  map <C-j> <C-d>
+  map <C-k> <C-u>
+
+  nnoremap Y y$
+
+"nmap >> <nop>
+"nmap << <nop>
+"nnoremap <Tab> >>
+"nnoremap <S-Tab> <<
+"let tab='    '
+"xmap >> <nop>
+"xmap << <nop>
+"xnoremap <Tab> :norm Hi<C-r>=tab<CR><CR>gv
+"xnoremap <S-Tab> :norm 0<C-r>=len(tab)<CR>x<CR>gv
+
+  nmap >> <nop>
+  nmap << <nop>
+  vmap >> <nop>
+  vmap << <nop>
+  nnoremap <Tab> >>
+  nnoremap <S-Tab> <<
+  vnoremap <Tab> >><Esc>gv
+  vnoremap <S-Tab> <<<Esc>gv
+
+  nnoremap <C-h> :tabp<CR>
+  nnoremap <C-l> :tabn<CR>
+"noremap! <C-BS> <C-w>
+"noremap! <C-h> <C-w>
+  imap <C-BS> <C-W>
+
+  autocmd SessionLoadPost * source ~/.vimrc
+
+  nnoremap _T :tabnew<Space>
+  nnoremap _H :split<Space>
+  nnoremap _V :vsplit<Space>
+
+  nnoremap <F5> :Te<CR>
+  nnoremap <F6> :Se<CR>
+  nnoremap <F7> :Ve<CR>
+
+  map +T :tab split<CR>:exec("tag ".expand("<cword>"))<CR>
+  map +H :sp <CR>:exec("tag ".expand("<cword>"))<CR>
+  map +V :vsp <CR>:exec("tag ".expand("<cword>"))<CR>
+
+  map ++T :tab split<CR>:exec("tselect ".expand("<cword>"))<CR>
+  map ++H :sp <CR>:exec("tselect ".expand("<cword>"))<CR>
+  map ++V :vsp <CR>:exec("tselect ".expand("<cword>"))<CR>
+
+
+
+  let &guicursor = &guicursor . ",a:blinkon0"
+
+function! InsertTabWrapper()
+    let col = col('.') - 1
+    if !col || getline('.')[col - 1] !~ '\k'
+        return "\<Tab>"
+    else
+        return "\<C-n>"
+    endif
+endfunction
+
+inoremap <expr> <Tab> InsertTabWrapper()
+inoremap <S-Tab> <C-p>
+
+"Autocomplete popup
+inoremap a a<C-n><C-p>
+inoremap b b<C-n><C-p>
+inoremap c c<C-n><C-p>
+inoremap d d<C-n><C-p>
+inoremap e e<C-n><C-p>
+inoremap f f<C-n><C-p>
+inoremap g g<C-n><C-p>
+inoremap h h<C-n><C-p>
+inoremap i i<C-n><C-p>
+inoremap j j<C-n><C-p>
+inoremap k k<C-n><C-p>
+inoremap l l<C-n><C-p>
+inoremap m m<C-n><C-p>
+inoremap n n<C-n><C-p>
+inoremap o o<C-n><C-p>
+inoremap p p<C-n><C-p>
+inoremap q q<C-n><C-p>
+inoremap r r<C-n><C-p>
+inoremap s s<C-n><C-p>
+inoremap t t<C-n><C-p>
+inoremap u u<C-n><C-p>
+inoremap v v<C-n><C-p>
+inoremap w w<C-n><C-p>
+inoremap x x<C-n><C-p>
+inoremap y y<C-n><C-p>
+inoremap z z<C-n><C-p>
+
+inoremap A A<C-n><C-p>
+inoremap B B<C-n><C-p>
+inoremap C C<C-n><C-p>
+inoremap D D<C-n><C-p>
+inoremap E E<C-n><C-p>
+inoremap F F<C-n><C-p>
+inoremap G G<C-n><C-p>
+inoremap H H<C-n><C-p>
+inoremap I I<C-n><C-p>
+inoremap J J<C-n><C-p>
+inoremap K K<C-n><C-p>
+inoremap L L<C-n><C-p>
+inoremap M M<C-n><C-p>
+inoremap N N<C-n><C-p>
+inoremap O O<C-n><C-p>
+inoremap P P<C-n><C-p>
+inoremap Q Q<C-n><C-p>
+inoremap R R<C-n><C-p>
+inoremap S S<C-n><C-p>
+inoremap T T<C-n><C-p>
+inoremap U U<C-n><C-p>
+inoremap V V<C-n><C-p>
+inoremap W W<C-n><C-p>
+inoremap X X<C-n><C-p>
+inoremap Y Y<C-n><C-p>
+inoremap Z Z<C-n><C-p>
+
+inoremap _ _<C-n><C-p>
+inoremap 1 1<C-n><C-p>
+inoremap 2 2<C-n><C-p>
+inoremap 3 3<C-n><C-p>
+inoremap 4 4<C-n><C-p>
+inoremap 5 5<C-n><C-p>
+inoremap 6 6<C-n><C-p>
+inoremap 7 7<C-n><C-p>
+inoremap 8 8<C-n><C-p>
+inoremap 9 9<C-n><C-p>
+inoremap 0 0<C-n><C-p>
+inoremap @ @<C-n><C-p>
+inoremap & &<C-n><C-p>
+inoremap * *<C-n><C-p>
+inoremap . .<C-n><C-p>
+inoremap , ,<C-n><C-p>
+inoremap < <<C-n><C-p>
+inoremap > ><C-n><C-p>
+inoremap / /<C-n><C-p>
+inoremap ~ ~<C-n><C-p>

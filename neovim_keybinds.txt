@@ -1,0 +1,55 @@
+" Keybindings
+" LSP
+	gD: Jump to declaration (not always implemented)
+	gd: Jump to definition
+	gr: Get References
+" Completion
+	<C-Space>: Open completion menu
+	" When completion menu is open
+		<C-k>: Opens information on selection in new split
+		" <Tab>, <S-Tab>, <Enter> work as expected
+" Terminals
+	#<C-t>: The #th terminal will be opened in a new split
+	<C-\><C-n> or <Esc> or jk/kj: Exit terminal mode
+	<C-w><C-x>: Move to buffer in the x direction
+	:tabnew terminal<CR>: Opens new terminal in a new tab
+		TODO: FIND GOOD KEYMAPPING FOR THIS AND THE OTHER <C-t> STUFF
+" Register Peeking
+	"": Opens peek window
+	<Esc>: Closes peek window
+	<character>: Copies text from the corresponding " register
+	<C-j>/<C-k>: Scrolls up/down the list
+" Telescope
+	<leader>ff: Find files
+	<leader>fg: Live grep
+	<leader>fb: Buffers
+	<leader>fh: Help tags
+	:Telescope git_commits/git_bcommits/git_branches/git_status/git_stash: Lists selected as telescope, selection switches to branch/commit
+	" Telescope List
+		<C-p>/<C-n>: Previous/Next item
+		j/k: Previous/Next item in normal mode
+		<CR>: Open selection
+		<C-x>: Open selection as horizontal split
+		<C-v>: Open selection as vertical split
+		<C-t>: Open selection as new tab
+" Transparency
+	<F6>: Toggle transparency (TODO: Change later if needed)
+" Twilight
+	<leader>tt: Toggle Twilight
+" Shade
+	<leader>ts: Toggle Shade
+	<C-Up>/<C-Down>: Turn shade brightness up/down
+" Range Highlighting
+	" Basic functionality here, refer to docs for more
+	:x,y: Highlights lines x to y/y to x
+	:x,y<>: Highlights the lines and executes the <> command (e.g. y, d, etc.)
+" Tabs
+	<C-f><C-h>: Previous tab
+	<C-f><C-l>: Next tab
+	<C-f><C-f><C-h>: Move tab to right
+	<C-f><C-f><C-l>: Move tab to left
+	<C-f><C-p>: Pin tab
+	<C-f>x: Go to tab x
+	<C-f><C-w>: Close tab
+	<C-f><C-q>: Force close tab
+	<C-f><C-s>: Magic tab select

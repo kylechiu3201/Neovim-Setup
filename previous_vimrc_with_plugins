@@ -1,0 +1,276 @@
+set nocompatible              " be iMproved, required
+filetype off                  " required
+
+
+
+
+
+"setting up vim on a new computer:
+	"replace vimrc file with this one (copy/paste)
+	"install vim-plug
+	"drag/drop c.snippets and cpp.snippets into snippets folder
+	"drag/drop wombat.vim into lightline theme folder
+	"drag/drop atom-dark.vim into atom-dark/colors folder
+	"install ctags onto system (for omnicppcomplete)
+	"install clang onto system (for clang-format)
+	"run :PlugInstall in vim
+	"possible issue with missing vimrc_example.vim?
+	"->if so, either comment last block out or drag/drop into system's $VIMRUNTIME folder
+
+"vim-plug setup stuff
+call plug#begin('~/.vim/plugged')
+
+"Plugins go here
+
+"themes
+	Plug 'gosukiwi/vim-atom-dark'
+"vim statusline theme
+	Plug 'itchyny/lightline.vim'
+"easy viewing of indentations
+	Plug 'nathanaelkane/vim-indent-guides'
+"syntax checking
+	Plug 'w0rp/ale'
+"syntax highlighting
+	Plug 'bfrg/vim-cpp-modern'
+"utility functions for snipmate
+	Plug 'MarcWeber/vim-addon-mw-utils'
+	Plug 'tomtom/tlib_vim'
+"snippet stuff
+	Plug 'garbas/vim-snipmate'
+	Plug 'honza/vim-snippets'
+	Plug 'vim-scripts/AutoComplPop'
+"intellisense based on ctags
+	Plug 'vim-scripts/OmniCppComplete'
+"commenting stuff out
+	Plug 'tpope/vim-commentary'
+"quick changing of surrounding stuff, like easy change from (a) to {a}
+	Plug 'tpope/vim-surround'
+"defines common vim functions for lh-brackets
+	Plug 'LucHermitte/lh-vim-lib'
+"various functions, curly bracket newline indentation
+	Plug 'LucHermitte/lh-brackets'
+"automatically detects indentation settings
+	Plug 'roryokane/detectindent', {'pinned': 1}
+"auto format
+	Plug 'rhysd/vim-clang-format'
+"aligns stuff like equal signs n stuff for prettier code
+	Plug 'junegunn/vim-easy-align'
+"fast and easy cursor movement throughout vim
+	Plug 'justinmk/vim-sneak'
+"auto-updates tags
+	Plug 'xolox/vim-shell'
+	Plug 'xolox/vim-misc'
+"easy buffer navigation
+	Plug 'christoomey/vim-tmux-navigator'
+"undo tree for going back to previous undos
+	Plug 'mbbill/undotree'
+"file system explorer
+	Plug 'scrooloose/nerdtree'
+"fuzzy finder
+	Plug 'junegunn/fzf'
+	Plug 'junegunn/fzf.vim'
+"documentation plugin
+	Plug 'vim-scripts/DoxygenToolkit.vim'
+	
+call plug#end()
+
+
+
+
+
+"additional vim settings
+
+"vim-wide configurations
+"turns on syntax highlighting
+	syntax on
+"sets scheme and font
+	colorscheme atom-dark
+	set guifont=Consolas:h9:cANSI
+"turns on line numbering
+	set relativenumber number
+"allows h/l line wrapping
+	set whichwrap+=<,>,[,]
+"sets indentation stuff
+	set shiftwidth=4
+	set tabstop=4
+	set expandtab
+	set softtabstop=4
+	set autoindent
+	set smartindent
+"other settings
+	set noerrorbells
+	set nowrap
+	let mapleader=" "
+"sets python3.dll for python support
+	set pythonthreedll=python38.dll
+"allows usage of debugger in vim
+	packadd termdebug
+"allows use of ctr c ctr v n stuff within vim
+	source $VIMRUNTIME/mswin.vim
+	behave mswin
+	
+"vim-wide custom mappings
+"remaps jk/kj to exit insert mode, so just press j and k at the same time
+	inoremap jk <Esc>
+	inoremap kj <Esc>
+"tab keymaps
+	map tl        :tabn<CR>
+	map th        :tabp<CR>
+	map <C-t>     :tabnew<CR>
+	map <C-w>     :tabclose<CR>
+"disables arrow keys (can remap them later if needed)
+	map <up> <nop>
+	map <down> <nop>
+	map <left> <nop>
+	map <right> <nop>
+"remaps to some default vim keys
+	noremap H ^
+	noremap L $
+	map <C-j> <C-d>
+	map <C-k> <C-u>
+"remaps indent and deindent
+	nmap >> <nop>
+	nmap << <nop>
+	vmap >> <nop>
+	vmap << <nop>
+	nnoremap <Tab> >>
+	nnoremap <S-Tab> <<
+	vnoremap <Tab> >><Esc>gv
+	vnoremap <S-Tab> <<<Esc>gv
+"maps find/replace to ctrl-h
+	nnoremap <C-h> :promptrepl<CR>
+"maps select-all/copy to gy
+	nnoremap gy :%y+<CR>
+"wraps single line in brackets
+	map <S-t> <S-Tab>yss}a<CR><Esc>$i<CR><Esc>k^
+"sets F4 to automatically compile and execute current file
+	autocmd filetype cpp nnoremap <F4> :w <bar> exec '!g++ '.shellescape('%').' -o '.shellescape('%:r').' && '.shellescape('%:r')<CR>
+"sets F5 to run debugger
+	nnoremap <F5> :Termdebug<CR>
+"{} navigation
+	map ]] :call search("^\\(\\w.*\\)\\?{")<CR>
+	map [[ :call search("^\\(\\w.*\\)\\?{", "b")<CR>
+	map ][ :call search("^}")<CR>
+	map [] :call search("^}", "b")<CR>
+
+
+
+"plugin settings and mappings
+"sets lightline configurations
+	let g:indent_guides_guide_size=1
+	set laststatus=2
+	set noshowmode
+	let g:lightline = {
+      \ 'colorscheme': 'wombat',
+      \ 'active': {
+      \   'left': [ [ 'mode', 'paste' ],
+      \             [ 'ayyy', 'char_val' ] ]
+      \ },
+      \ 'component': {
+      \   'char_val': 'char_val: %b', 
+	  \	  'ayyy': 'you mad cute'
+      \ },
+      \ }
+	  
+"fixes a syntax highlighting issue
+	let c_no_curly_error = 1
+	  
+"enables indent-guides at startup
+	let g:indent_guides_enable_on_vim_startup = 1
+"toggles indent-guides
+	nnoremap <F3> :IndentGuidesToggle<CR>
+	
+"sets omnicppcomplete settings
+	set nocp
+	filetype plugin on
+	
+"tag stuff
+	let g:fzf_tags_command = 'ctags -R --c++-kinds=+p --fields=+iaS --extra=+q'
+	map ff :Files<CR>
+	map ft :Tags<CR>
+	map <silent>gt :call xolox#misc#os#exec({'command': 'ctags -R --c++-kinds=+p --fields=+iaS --extra=+q', 'async': 1})<CR>
+	set completeopt-=preview
+"auto-updates tags whenever save occurs
+	autocmd BufWritePost *.cpp,*.h,*.c call xolox#misc#os#exec({'command': 'ctags -R --c++-kinds=+p --fields=+iaS --extra=+q', 'async': 1})
+"creates tagfile at start
+	au BufEnter *.cpp,*.h,*.c call xolox#misc#os#exec({'command': 'ctags -R --c++-kinds=+p --fields=+iaS --extra=+q', 'async': 1})
+	
+"removes use of markers for lh-brackets
+	let g:usemarks=0
+	
+"sets clang-format to Shift-F
+	nmap <S-f> :ClangFormat<CR>
+
+"easy-align keymaps
+	xmap ga <Plug>(EasyAlign)
+	nmap ga <Plug>(EasyAlign)
+	
+"tmux remaps
+	let g:tmux_navigator_no_mappings=1
+	nnoremap <silent> fh :TmuxNavigateLeft<CR>
+	nnoremap <silent> fj :TmuxNavigateDown<CR>
+	nnoremap <silent> fk :TmuxNavigateUp<CR>
+	nnoremap <silent> fl :TmuxNavigateRight<CR>
+	nnoremap <silent> fp :TmuxNavigatePrevious<CR>
+	nnoremap <silent> fc :close<CR>
+	
+"toggles UndoTree
+	nnoremap <C-b> :UndotreeToggle<CR>
+	
+"toggles NERDTree and lets it open files in new tab
+	nmap <C-n> :NERDTreeToggle<CR>
+	let NERDTreeMapOpenInTab='<ENTER>'
+"automatically opens NERDTree if vim itself is opened (no specified file)
+	autocmd StdinReadPre * let s:std_in=1
+	autocmd VimEnter * if argc() == 0 && !exists("s:std_in") | NERDTree | endif
+
+"fzf popup
+	let $FZF_DEFAULT_OPTS='--reverse'
+	
+"doxygentoolkit
+	nnoremap dg :Dox<CR>
+	
+
+
+
+
+" Vim with all enhancements
+source $VIMRUNTIME/vimrc_example.vim
+
+" Use the internal diff if available.
+" Otherwise use the special 'diffexpr' for Windows.
+if &diffopt !~# 'internal'
+  set diffexpr=MyDiff()
+endif
+function MyDiff()
+  let opt = '-a --binary '
+  if &diffopt =~ 'icase' | let opt = opt . '-i ' | endif
+  if &diffopt =~ 'iwhite' | let opt = opt . '-b ' | endif
+  let arg1 = v:fname_in
+  if arg1 =~ ' ' | let arg1 = '"' . arg1 . '"' | endif
+  let arg1 = substitute(arg1, '!', '\!', 'g')
+  let arg2 = v:fname_new
+  if arg2 =~ ' ' | let arg2 = '"' . arg2 . '"' | endif
+  let arg2 = substitute(arg2, '!', '\!', 'g')
+  let arg3 = v:fname_out
+  if arg3 =~ ' ' | let arg3 = '"' . arg3 . '"' | endif
+  let arg3 = substitute(arg3, '!', '\!', 'g')
+  if $VIMRUNTIME =~ ' '
+    if &sh =~ '\<cmd'
+      if empty(&shellxquote)
+        let l:shxq_sav = ''
+        set shellxquote&
+      endif
+      let cmd = '"' . $VIMRUNTIME . '\diff"'
+    else
+      let cmd = substitute($VIMRUNTIME, ' ', '" ', '') . '\diff"'
+    endif
+  else
+    let cmd = $VIMRUNTIME . '\diff'
+  endif
+  let cmd = substitute(cmd, '!', '\!', 'g')
+  silent execute '!' . cmd . ' ' . opt . arg1 . ' ' . arg2 . ' > ' . arg3
+  if exists('l:shxq_sav')
+    let &shellxquote=l:shxq_sav
+  endif
+endfunction
